@@ -8,6 +8,16 @@ let REDIS_CONF = {
   host: '127.0.0.1'
 }
 
+let MYSQL_CONF = {
+  host: 'localhost',
+  user: 'root',
+  password: '817102',
+  port: 3306,
+  database: 'koa_weibo_db',
+  dialect: 'mysql'
+}
+
 module.exports = {
-  REDIS_CONF
+  REDIS_CONF,
+  MYSQL_CONF
 }
