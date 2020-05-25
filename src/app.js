@@ -8,13 +8,19 @@ const logger = require('koa-logger')
 const session = require('koa-generic-session')
 const redisStore = require('koa-redis')
 
+const { isProd } = require('./utils/env')
+
 const { REDIS_CONF } = require('./conf/db')
 
 const index = require('./routes')
 const users = require('./routes/users')
+const errorViewRouter = require('./routes/view/error')
 
 // error handler
-onerror(app)
+const onerrorConf = isProd && {
+  redirect: '/error'
+}
+onerror(app, onerrorConf)
 
 // middlewares
 app.use(bodyparser({
@@ -55,6 +61,8 @@ app.use(session({
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+
+app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

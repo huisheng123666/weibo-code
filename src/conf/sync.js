@@ -12,7 +12,7 @@ seq.authenticate().then(() => {
   console.log('db err')
 })
 
-// 执行同步
+// 执行同步,(同步数据库模型数据)
 seq.sync({ force: true }).then(() => {
   console.log('db sync ok')
   process.exit()
