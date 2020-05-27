@@ -9,6 +9,7 @@
     "lint": "eslint --ext .js ./src"
   },
   "dependencies": {
+    "ajv": "^6.12.2",
     "debug": "^4.1.1",
     "ejs": "~2.3.3",
     "koa": "^2.7.0",
@@ -35,5 +36,7 @@
     "pre-commit": "^1.2.2",
     "supertest": "^4.0.2"
   },
-  "pre-commit": ["lint"]
+  "pre-commit": [
+    "lint"
+  ]
 }
