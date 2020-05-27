@@ -47,6 +47,10 @@
                 if (userNameTimeoutId) {
                     clearTimeout(userNameTimeoutId)
                 }
+                if (!$inputUserName.val()) {
+                  $spanUserNameInfo.text('用户名不能为空')
+                  return
+                }
                 userNameTimeoutId = setTimeout(function() {
                     // 判断用户名是否已存在
                     var userName = $inputUserName.val()

@@ -3,9 +3,10 @@
  * @author xmw
  */
 
-const { getUserInfo } = require('../services/user')
+const { getUserInfo, createUser } = require('../services/user')
 const { SuccessModal, ErrorModel } = require('../model/resModel')
-const { registerUsernameNotExistInfo } = require('../model/errorInfo')
+const { registerUserNameNotExistInfo, registerUserNameExistInfo, registerFailInfo } = require('../model/errorInfo')
+const crypto = require('../utils/cryp')
 
 /**
  * 用户名是否存在
@@ -17,10 +18,38 @@ async function isExist(userName) {
   if (userInfo) {
     return new SuccessModal(userInfo)
   } else {
-    return new ErrorModel(registerUsernameNotExistInfo)
+    return new ErrorModel(registerUserNameNotExistInfo)
+  }
+}
+
+/**
+ * @description 注册
+ * @param {string} userName
+ * @param {string} password
+ * @param {number} gender (1.男，2.女，3.保密)
+ * @return {Promise<Object>}
+ */
+async function register({ userName, password, gender }) {
+  const userInfo = await getUserInfo(userName, password)
+  if (userInfo) {
+    // 用户名已存在
+    return new ErrorModel(registerUserNameExistInfo)
+  } else {
+    try {
+      await createUser({
+        userName,
+        password: crypto(password),
+        gender
+      })
+      return new SuccessModal()
+    } catch (err) {
+      console.error(err.message, err.stack)
+      return new ErrorModel(registerFailInfo)
+    }
   }
 }
 
 module.exports = {
-  isExist
+  isExist,
+  register
 }
