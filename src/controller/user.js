@@ -3,13 +3,14 @@
  * @author xmw
  */
 
-const { getUserInfo, createUser } = require('../services/user')
+const { getUserInfo, createUser, deleteUser } = require('../services/user')
 const { SuccessModal, ErrorModel } = require('../model/resModel')
 const {
   registerUserNameNotExistInfo,
   registerUserNameExistInfo,
   registerFailInfo,
-  loginFailInfo
+  loginFailInfo,
+  deleteUserFailInfo
 } = require('../model/errorInfo')
 const crypto = require('../utils/cryp')
 
@@ -35,27 +36,26 @@ async function isExist(userName) {
  * @return {Promise<Object>}
  */
 async function register({ userName, password, gender }) {
-  const userInfo = await getUserInfo(userName, password)
+  const userInfo = await getUserInfo(userName, '')
   if (userInfo) {
     // 用户名已存在
     return new ErrorModel(registerUserNameExistInfo)
-  } else {
-    try {
-      await createUser({
-        userName,
-        password: crypto(password),
-        gender
-      })
-      return new SuccessModal()
-    } catch (err) {
-      console.error(err.message, err.stack)
-      return new ErrorModel(registerFailInfo)
-    }
+  }
+  try {
+    await createUser({
+      userName,
+      password: crypto(password),
+      gender
+    })
+    return new SuccessModal()
+  } catch (err) {
+    console.error(err.message, err.stack)
+    return new ErrorModel(registerFailInfo)
   }
 }
 
 /**
- *
+ * 登陆
  * @param {Object}ctx
  * @param {string}username
  * @param {string}password
@@ -69,11 +69,24 @@ async function login(ctx, username, password) {
   if (!ctx.session.userInfo) {
     ctx.session.userInfo = userInfo
   }
-  return new SuccessModal()
+  return new SuccessModal(deleteUserFailInfo)
+}
+
+/**
+ * 删除用户
+ * @param {string} username
+ */
+async function deleteCurrentUser(username) {
+  const result = await deleteUser(username)
+  if (result) {
+    return new SuccessModal()
+  }
+  return new ErrorModel()
 }
 
 module.exports = {
   isExist,
   register,
-  login
+  login,
+  deleteCurrentUser
 }

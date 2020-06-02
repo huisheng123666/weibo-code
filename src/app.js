@@ -45,9 +45,9 @@ app.use(session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: 24 * 64 * 60 * 1000 // ms
+    maxAge: 24 * 60 * 60 * 1000 // ms
   },
-  ttl: 24 * 64 * 60 * 1000, // redis过期时间
+  ttl: 24 * 60 * 60 * 1000, // redis过期时间
   store: redisStore({
     all: `${REDIS_CONF.host}:${REDIS_CONF.port}`
   })

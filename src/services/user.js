@@ -51,7 +51,18 @@ async function createUser({ userName, password, gender = 3, nickName }) {
   return result.dataValues
 }
 
+async function deleteUser(username) {
+  const result = await User.destroy({
+    where: {
+      username
+    }
+  })
+  // result 删除的行数
+  return result > 0
+}
+
 module.exports = {
   getUserInfo,
-  createUser
+  createUser,
+  deleteUser
 }
