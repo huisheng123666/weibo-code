@@ -69,7 +69,7 @@ async function login(ctx, username, password) {
   if (!ctx.session.userInfo) {
     ctx.session.userInfo = userInfo
   }
-  return new SuccessModal(deleteUserFailInfo)
+  return new SuccessModal()
 }
 
 /**

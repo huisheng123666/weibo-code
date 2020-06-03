@@ -4,5 +4,5 @@
  */
 
 module.exports = {
-  DEFAULT_PICTURE: 'https://dwz.cn/rnTnftZs'
+  DEFAULT_PICTURE: 'https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3140403455,2984550794&fm=26&gp=0.jpg'
 }
