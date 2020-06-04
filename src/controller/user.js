@@ -3,13 +3,14 @@
  * @author xmw
  */
 
-const { getUserInfo, createUser, deleteUser } = require('../services/user')
+const { getUserInfo, createUser, deleteUser, updateUser } = require('../services/user')
 const { SuccessModal, ErrorModel } = require('../model/resModel')
 const {
   registerUserNameNotExistInfo,
   registerUserNameExistInfo,
   registerFailInfo,
   loginFailInfo,
+  changeInfoFailInfo,
   deleteUserFailInfo
 } = require('../model/errorInfo')
 const crypto = require('../utils/cryp')
@@ -81,12 +82,38 @@ async function deleteCurrentUser(username) {
   if (result) {
     return new SuccessModal()
   }
-  return new ErrorModel()
+  return new ErrorModel(deleteUserFailInfo)
+}
+
+/**
+ * 修改用户信息
+ * @param {Object}ctx
+ * @param {string}nickName
+ * @param {string}city
+ * @param {string}picture
+ * @return {Promise<Object>}
+ */
+async function changeInfo(ctx, {nickName, city, picture}) {
+  const { username } = ctx.session.userInfo
+  if (!nickName) {
+    nickName = username
+  }
+  const result = await updateUser({newNickName: nickName, newPicture: picture, newCity: city}, {userName: username})
+  if (result) {
+    Object.assign(ctx.session.userInfo, {
+      nickName,
+      city,
+      picture
+    })
+    return new SuccessModal()
+  }
+  return new ErrorModel(changeInfoFailInfo)
 }
 
 module.exports = {
   isExist,
   register,
   login,
-  deleteCurrentUser
+  deleteCurrentUser,
+  changeInfo
 }
