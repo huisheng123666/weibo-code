@@ -11,8 +11,10 @@ const {
   registerFailInfo,
   loginFailInfo,
   changeInfoFailInfo,
-  deleteUserFailInfo
+  deleteUserFailInfo,
+  changePasswordFailInfo
 } = require('../model/errorInfo')
+const { set, get, del } = require('../cache/_redis')
 const crypto = require('../utils/cryp')
 
 /**
@@ -67,8 +69,11 @@ async function login(ctx, username, password) {
   if (!userInfo) {
     return new ErrorModel(loginFailInfo)
   }
+  const sid = await get(username)
+  if (sid) del(sid)
   if (!ctx.session.userInfo) {
     ctx.session.userInfo = userInfo
+    set(username, `weibo:sess:${ctx.sessionId}`)
   }
   return new SuccessModal()
 }
@@ -110,10 +115,35 @@ async function changeInfo(ctx, {nickName, city, picture}) {
   return new ErrorModel(changeInfoFailInfo)
 }
 
+/**
+ * 修改密码
+ * @param userName
+ * @param password
+ * @param newPassword
+ * @return {Promise<Object>}
+ */
+async function changePassword({ userName, password, newPassword }) {
+  if (!password) {
+    return new ErrorModel(changePasswordFailInfo)
+  }
+  const result = await updateUser({ newPassword: crypto(newPassword) }, { userName, password: crypto(password) })
+  if (result) {
+    return new SuccessModal()
+  }
+  return new ErrorModel(changePasswordFailInfo)
+}
+
+function logout(ctx) {
+  ctx.session = null
+  return new SuccessModal()
+}
+
 module.exports = {
   isExist,
   register,
   login,
   deleteCurrentUser,
-  changeInfo
+  changeInfo,
+  changePassword,
+  logout
 }

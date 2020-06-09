@@ -57,7 +57,12 @@ function get(key) {
   })
 }
 
+function del(key) {
+  redisClient.del(key)
+}
+
 module.exports = {
   set,
-  get
+  get,
+  del
 }
